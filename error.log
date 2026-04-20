@@ -1,0 +1,4 @@
+TypeError: handler is not a function
+    at C:\Users\Satish\Desktop\nexttech\nexttech-web\.next\dev\server\chunks\ssr\0jtb_@better-auth_core_dist_0eqtusy._.js:2433:283
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at runWithEndpointContext (C:\Users\Satish\Desktop\nexttech\nexttech-web\.next\dev\server\chunks\ssr\0jtb_@better-auth_core_dist_0eqtusy._.js:2364:41)

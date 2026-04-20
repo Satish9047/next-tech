@@ -1,26 +1,121 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  --color-primary: #6ecef4;
+  --color-primary-dark: #3ab8ed;
+  --color-primary-glow: rgba(110, 206, 244, 0.25);
+  --color-primary-faint: rgba(110, 206, 244, 0.07);
+  --color-dark: #060b14;
+  --color-dark2: #0d1724;
+  --color-dark3: #111e30;
+  --color-text: #e8f4fb;
+  --color-muted: #7aa3bb;
+  --color-white: #ffffff;
+  
+  --font-outfit: var(--font-outfit), sans-serif;
+  --font-rajdhani: var(--font-rajdhani), sans-serif;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --animate-pulse-slow: pulse-slow 6s ease-in-out infinite alternate;
+  --animate-pulse-slower: pulse-slow 8s ease-in-out infinite alternate-reverse;
+  --animate-fade-up: fadeUp 0.7s ease both;
+  --animate-blink: blink 1.4s infinite;
+  --animate-marquee: marquee 22s linear infinite;
+  --animate-spin-slow: spin 20s linear infinite;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @keyframes pulse-slow {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.1);
+    }
+  }
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes blink {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 }
 
+:root {
+  --primary: #6ecef4;
+  --primary-dark: #3ab8ed;
+  --primary-glow: rgba(110, 206, 244, 0.25);
+  --primary-faint: rgba(110, 206, 244, 0.07);
+  --dark: #060b14;
+  --dark2: #0d1724;
+  --dark3: #111e30;
+  --text: #e8f4fb;
+  --muted: #7aa3bb;
+  --white: #ffffff;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--dark);
+  color: var(--text);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.5;
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Text Selection and Base Setup */
+::selection {
+  background: var(--primary);
+  color: var(--dark);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-rajdhani);
 }
