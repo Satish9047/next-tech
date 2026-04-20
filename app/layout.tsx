@@ -31,7 +31,12 @@ export default function RootLayout({
       className={`${outfit.variable} ${rajdhani.variable} scroll-smooth antialiased overflow-x-hidden`}
     >
       <body className="min-h-full flex flex-col font-outfit font-light relative bg-dark text-text">
-        <Toaster position="top-center" toastOptions={{ className: 'bg-dark2 text-text border border-primary/20' }} />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            className: "bg-dark2 text-text border border-primary/20",
+          }}
+        />
         <CustomCursor />
         {children}
       </body>
