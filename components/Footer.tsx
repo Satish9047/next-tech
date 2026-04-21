@@ -12,9 +12,10 @@ export default function Footer() {
               <Image
                 src="/logo-blue.png"
                 alt="Next Tech Logo"
-                width={52}
-                height={52}
-                className="h-[52px] w-auto object-contain"
+                width={156}
+                height={156}
+                priority
+                className="f-full w-auto object-contain"
               />
             </div>
             <div className="text-text font-outfit">
