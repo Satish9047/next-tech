@@ -18,9 +18,8 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[6%] bg-dark/75 backdrop-blur-[18px] border-b border-primary/10 transition-all duration-300 ${
-        scrolled ? "py-[0.8rem]" : "py-[1.2rem]"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[6%] bg-dark/75 backdrop-blur-[18px] border-b border-primary/10 transition-all duration-300 ${scrolled ? "py-[0.8rem]" : "py-[1.2rem]"
+        }`}
     >
       <Link href="#" className="flex items-center gap-[0.6rem] no-underline">
         <div className="flex items-center shrink-0 h-[52px]">
@@ -82,7 +81,7 @@ export default function Navbar() {
         </li>
         <li>
           <Link
-            href="/contact"
+            href="#contact"
             className="text-muted no-underline text-[0.88rem] transition-colors duration-200 hover:text-primary"
             onClick={() => setMenuOpen(false)}
           >
@@ -92,7 +91,7 @@ export default function Navbar() {
       </ul>
 
       <Link
-        href="/contact"
+        href="#contact"
         className="hidden md:inline-block bg-primary text-dark py-[0.55rem] px-[1.4rem] rounded-full font-semibold text-[0.85rem] no-underline font-rajdhani transition-all duration-300 hover:shadow-[0_0_20px_var(--color-primary-glow)] hover:-translate-y-[1px]"
       >
         Get a Quote

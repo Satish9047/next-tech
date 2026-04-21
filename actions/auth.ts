@@ -4,31 +4,14 @@ import { z } from "zod";
 import { registerSchema, loginSchema } from "@/schemas/auth";
 import dbConnect from "@/lib/db";
 import { User } from "@/models/User";
-import { auth } from "@/lib/auth";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   consumeRateLimit,
   RateLimitExceededError,
 } from "@/lib/rate-limit";
 import { getClientIp } from "@/lib/request-ip";
-
-// Type for the better-auth custom plugin API
-interface MongooseSessionAPI {
-  createMongooseSession: (params: {
-    body: { userId: string; email: string; role: string };
-    headers: Headers;
-  }) => Promise<MongooseSessionResult>;
-}
-
-interface MongooseSessionResult {
-  token?: string;
-  expiresAt?: string | Date;
-  session?: {
-    token?: string;
-    expiresAt?: string | Date;
-  };
-}
+import { createAppSession, deleteAppSession } from "@/lib/session";
 
 export async function registerAction(data: z.infer<typeof registerSchema>) {
   try {
@@ -122,24 +105,7 @@ export async function loginAction(data: z.infer<typeof loginSchema>) {
       return { error: "Invalid email or password" };
     }
 
-    const sessionResult = await (
-      auth.api as unknown as MongooseSessionAPI
-    ).createMongooseSession({
-      body: {
-        userId: user._id.toString(),
-        email: user.email,
-        role: user.role,
-      },
-      headers: await headers(),
-    });
-
-    const token = sessionResult?.token ?? sessionResult?.session?.token;
-    const expiresAt =
-      sessionResult?.expiresAt ?? sessionResult?.session?.expiresAt;
-
-    if (!token) {
-      return { error: "Unable to create login session. Please try again." };
-    }
+    const { token, expiresAt } = await createAppSession(user._id.toString());
 
     const { cookies } = await import("next/headers");
     const cookieStore = await cookies();
@@ -170,15 +136,17 @@ export async function loginAction(data: z.infer<typeof loginSchema>) {
 }
 
 export async function logoutAction() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("better-auth.session_token")?.value;
+
   try {
-    await auth.api.signOut({
-      headers: await headers(),
-    });
+    if (token) {
+      await deleteAppSession(token);
+    }
   } catch (error: unknown) {
     console.error("Logout Error:", error);
   }
 
-  const cookieStore = await cookies();
   cookieStore.delete("better-auth.session_token");
   redirect("/login");
 }

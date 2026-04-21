@@ -1,12 +1,12 @@
-import { cookies, headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { randomBytes } from "node:crypto";
+import { cookies } from "next/headers";
 import dbConnect from "@/lib/db";
 import { User } from "@/models/User";
 
-type SessionRecord = Record<string, unknown>;
-type SessionApiResponse = {
-  user?: SessionRecord;
-  session?: SessionRecord;
+type SessionDocument = {
+  token: string;
+  userId?: string;
+  expiresAt?: Date;
 };
 
 export type AppUserRole = "user" | "admin";
@@ -21,45 +21,41 @@ function normalizeRole(value: unknown): AppUserRole {
   return value === "admin" ? "admin" : "user";
 }
 
-function fromSessionPayload(payload: SessionApiResponse): AuthenticatedUser | null {
-  const userRecord = payload.user;
-  if (!userRecord) return null;
+async function getSessionCollection() {
+  await dbConnect();
+  return User.db.collection<SessionDocument>("session");
+}
 
-  const id = typeof userRecord.id === "string" ? userRecord.id : null;
-  const email = typeof userRecord.email === "string" ? userRecord.email : null;
-  if (!id || !email) return null;
+export async function createAppSession(userId: string) {
+  const token = randomBytes(32).toString("hex");
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const sessionCollection = await getSessionCollection();
 
-  const roleFromSession = payload.session?.role;
-  const roleFromUser = userRecord.role;
-  const role = normalizeRole(
-    typeof roleFromSession === "string" ? roleFromSession : roleFromUser,
-  );
+  await sessionCollection.insertOne({
+    token,
+    userId,
+    expiresAt,
+  });
 
-  return { id, email, role };
+  return { token, expiresAt };
+}
+
+export async function deleteAppSession(token: string) {
+  const sessionCollection = await getSessionCollection();
+  await sessionCollection.deleteOne({ token });
 }
 
 export async function getCurrentUser(): Promise<AuthenticatedUser | null> {
-  const session = (await auth.api.getSession({
-    headers: await headers(),
-  })) as SessionApiResponse | null;
-
-  if (session) {
-    const userFromSession = fromSessionPayload(session);
-    if (userFromSession) return userFromSession;
-  }
-
   const cookieStore = await cookies();
   const token = cookieStore.get("better-auth.session_token")?.value;
   if (!token) return null;
 
-  await dbConnect();
-
-  const sessionDoc = await User.db
-    .collection("session")
-    .findOne<{ userId?: string; expiresAt?: Date }>({ token });
+  const sessionCollection = await getSessionCollection();
+  const sessionDoc = await sessionCollection.findOne({ token });
 
   if (!sessionDoc?.userId) return null;
   if (sessionDoc.expiresAt && new Date(sessionDoc.expiresAt) <= new Date()) {
+    await sessionCollection.deleteOne({ token });
     return null;
   }
 
