@@ -18,24 +18,20 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[6%] bg-dark/75 backdrop-blur-[18px] border-b border-primary/10 transition-all duration-300 ${scrolled ? "py-[0.8rem]" : "py-[1.2rem]"
-        }`}
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[6%] bg-dark/75 backdrop-blur-[18px] border-b border-primary/10 transition-all duration-300 ${
+        scrolled ? "py-[0.8rem]" : "py-[1.2rem]"
+      }`}
     >
       <Link href="#" className="flex items-center gap-[0.6rem] no-underline">
         <div className="flex items-center shrink-0 h-[52px]">
           <Image
             src="/logo-blue.png"
             alt="Next Tech Logo"
-            width={52}
-            height={52}
-            className="h-[52px] w-auto object-contain"
+            width={156}
+            height={156}
+            priority
+            className="h-full w-auto object-contain"
           />
-        </div>
-        <div className="hidden lg:block text-text font-outfit">
-          Next Tech<br />
-          <span className="text-[0.6rem] font-normal text-muted tracking-[0.12em] uppercase">
-            and Solution Pvt. Ltd.
-          </span>
         </div>
       </Link>
 
